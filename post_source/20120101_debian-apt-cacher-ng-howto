@@ -1,8 +1,5 @@
 Title: Debian apt-cacher-ng how to
 Description: How to for setting up local apt repository to save bandwidth using apt-cacher-ng on Debian Squeeze.
-Tag: apt-cacher-ng
-Tag: Debian
-Tag: How to
 
 Apt-cacher-ng is a caching proxy for apt packages. Clients that use the proxy download apt packages directly from the proxy server, which typically will be on the local network.
 

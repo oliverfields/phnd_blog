@@ -1,11 +1,5 @@
 Title: Fixing HTTP error on Wordpress 3.3.1 image upload
 Description: Fix for Wordpress HTTP error when uploading images on a Nginx/php-fpm server.
-Tag: Wordpress
-Tag: Nginx
-Tag: Php-fpm
-Tag: GD
-Tag: Tuning
-Tag: Debian
 
 After moving a Wordpress blog to new Rackspace cloud server running Debian, Nginx and Php-fpm. Image uploads half stopped working. The image would get uploaded (using either browser or flash uploaders), but Wordpress would complain by showing a **HTTP Error** error and would not resize (crunch) the image.
 

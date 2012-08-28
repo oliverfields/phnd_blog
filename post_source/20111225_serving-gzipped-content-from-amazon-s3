@@ -1,12 +1,5 @@
 Title: Serving gzipped content from Amazon S3
 Description: Script to recursively upload a directory to S3, gzipping content and setting S3 meta data for selected file types.
-Tag: S3
-Tag: PageSpeed
-Tag: Optimization
-Tag: Automation
-Tag: s3cmd
-Tag: Bash
-Tag: Script
 
 In order to optimize a site for speed a service such as Google's "PageSpeed":"https://developers.google.com/pagespeed/" is invaluable. If running a site from Amazon's S3 service (i.e. static files) a lot will be taken care of, but some of the suggestions from PageSpeed are not easy to get done manually. One example is that PageSpeed suggests serving HTML, CSS and javascript files already gzip compressed.
 

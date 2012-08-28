@@ -1,7 +1,5 @@
 Title: Sourcing config files from puppet modules
 Description: How to correctly source a file in a Puppet module.
-Tag: Puppet
-Tag: Configuration management
 
 Sharing this as it took me embarrisingly long to figure out. Kept getting error @@Could not evaluate: Could not retrieve information from source@@ when trying to source a config file from a Puppet module.
 

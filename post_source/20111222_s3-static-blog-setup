@@ -1,8 +1,5 @@
 Title: Publishing a static blog 1/2
 Description: Hosting a statically generated blog from an Amazon S3 bucket.
-Tag: Static blog generator
-Tag: S3
-Tag: shblog
 
 notice Using Amazon S3 to host a statically generated blog is an overcommable exercise that provides a good platform for serving the world your writings. This is part 1 of 2 and explains how to get up and running. Part 2 explains a possible "automated workflow":"/2011/12/22/s3-static-blog-workflow.html".
 

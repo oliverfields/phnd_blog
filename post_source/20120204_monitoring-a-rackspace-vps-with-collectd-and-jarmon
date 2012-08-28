@@ -1,13 +1,5 @@
 Title: Monitoring a Debian Rackspace VPS with Collectd and Jarmon
 Description: Monitoring production servers is vital for tuning, this is also true for cloud based server. Good tools for this are collectd for data collection and Jarmon for data visualization.
-Tag: VPS
-Tag: Monitoring
-Tag: How to
-Tag: Collectd
-Tag: Jarmon
-Tag: Rackspace
-Tag: Debian
-Tag: Squeeze
 
 Monitoring servers is a good way to identify bottlenecks, see if tweaks to configs increase performance or to aid in capacity planning.
 

@@ -1,10 +1,5 @@
 Title: Packaging Wordpress for Debian
 Description: How to package Wordpress as a Debian package for controlled upgrades.
-Tag: Packaging
-Tag: How to
-Tag: Wordpress
-Tag: Debian
-Tag: equivs
 
 Wordpress has out of the box simple upgrades, but clicking around a web based admin interface is tedious at best. Rolling a Wordpress .deb file makes automating roll outs and upgrades across multiple servers feasible.
 

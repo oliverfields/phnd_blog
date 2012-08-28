@@ -1,11 +1,5 @@
 Title: Setup Wordpress email from Debian cloud server
 Description: How to explaining using sSMTP as the MTA on a cloud server. Web developers are used to web servers from regular ISPs having mail capabilities out of the box. On a Rackspace or Amazon S3 server this must be setup.
-Tag: E-mail
-Tag: sSMTP
-Tag: Rackspace
-Tag: EC2
-Tag: How to
-Tag: SMTP
 
 Virtual cloud servers are great. Set one up with a couple of clicks, install Wordpress and finish off with a DNS update and your blog is online. Except Wordpress won't be able to send email, as the new server isn't configured for that. Using a traditional web host this will all work out of the box, but on a cloud server you need to make it happen.
 
