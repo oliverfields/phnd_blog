@@ -1,0 +1,86 @@
+Title: Basic web project plan
+Description: Even small projects are worth planning. The process of thinking through the steps and risks is pro actively dealing with potential trouble. Having a project plan template makes this easier to do.
+Tag: Scope
+Tag: Deliverables
+Tag: Change management process
+Tag: Planning
+
+Planning projects helps visualize and get agreement on what exactly a project will be about. Without a plan it is impossible to say how much of the project is left or know how long it will take. This doesn't mean everything has to be run according to a overly plan detailed plan carved in stone, but the process of planning is a great way to increase chances of success. So, what should a plan include for a smallish web site project?
+
+
+h2 Plan template
+
+Having a plan template allows it to be reused from project to project. Each project can potentially provide ideas for improvements, by feeding these into the template you will be getting a little bit better each time. A basic plan template could include the following.
+
+% Item % Description %
+| Introduction | Explain why the project was it initiated and what is its purpose. |
+| Project scope | What is included and, perhaps more importantly, what is not included  in the project |
+| Deliverables | What concrete results/products will the project create. When these deliverables have been completed the project is complete. |
+| Project risk | What known unknowns are there, how could they affect the project? |
+| Project team | Who does what. |
+| Schedule | Who does what by when and milestones. |
+| Development process | Outline how the design will be created, good idea to include "design revisions":"/2011/05/11/setting-limits-on-design-tasks" and how development will be handled |
+| Development process | Outline how development will be done. |
+| Change management process | How change will be managed. |
+
+
+h2 Introduction
+
+Quite simple, but important so that project members can get an overview of why the project was created and what it will deliver.
+
+
+h2 Project scope
+
+Explains what the project includes and what it does not. For a smallish web project bullet points or a paragraph of text is probably adequate.
+
+
+h2 Deliverables
+
+List what items the project must deliver. When each deliverable is met the project is complete. Examples could be:
+
+* Implement new design
+* Site optimized for SEO
+* Facebook comments
+
+
+h2 Project risk
+
+At the start of a project there will always be known unknowns, for instance we know we will be integrating with the accounting system, but the API is not yet documented. In such instances it is important to be upfront about these risks and tell the client what assumptions have been made and how the assumptions might change. In the case of the missing API, rework and potential cost and schedule increases may occur.
+
+h2 Project team
+
+Simply list the people working on the project, useful information would be:
+
+* Name
+* Role (e.g. Project manager, developer, designer etc)
+* Email/mobile/other contact information
+
+
+h2 Schedule
+
+Overview of what will be done when and by who. Is often a gantt chart, but could also be a table showing date, description of task/mile stone and who is responsible.  
+
+
+h2 Development process
+
+Outline of how the design will be created, for instance:
+
+# Decide what feel the design should have
+# Create initial sketch
+# Rework sketch with client feed back
+# Create initial design
+# Rework design with client feed back
+# Sign off design - further changes are handled as formal change requests
+# Build site based on approved design
+# Test
+# Client approval period
+# Sign off site
+
+
+h2 Change management process
+
+The change management process should be relatively formal, requiring changes to be submitted in writing and handled strictly. Bug reports would also be treated as change requests. An example could be:
+
+!/attachments/change_request.png Change management process example!
+
+Making a plan isn't that hard, and it gets easier when using a template. The plan template also allows the organization to ‘learn’ if it is actively updated with new insights gained from other projects.

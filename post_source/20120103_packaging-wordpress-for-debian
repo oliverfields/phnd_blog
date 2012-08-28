@@ -1,0 +1,70 @@
+Title: Packaging Wordpress for Debian
+Description: How to package Wordpress as a Debian package for controlled upgrades.
+Tag: Packaging
+Tag: How to
+Tag: Wordpress
+Tag: Debian
+Tag: equivs
+
+Wordpress has out of the box simple upgrades, but clicking around a web based admin interface is tedious at best. Rolling a Wordpress .deb file makes automating roll outs and upgrades across multiple servers feasible.
+
+There are several ways to roll your own package, but one of the simpler ones is equivs which will be used in this how to, lets start by installing equivs.
+
+warning Equivs is designed for creating trivial Debian packages, for anything more advanced than this example please consider using full blown packaging tools. This example does not attempt in any way to adhere to the Debian Policy manual, it is just demonstrating how to package files for easy distribution.
+
+> aptitude install equivs
+
+To package Wordpress, we'll need to get it, download latest Wordpress version.
+
+notice Wordpress "older versions":"http://wordpress.org/download/release-archive/" are also available.
+
+> wget http://wordpress.org/latest.zip
+
+Create a new directory to keep things tidy and unpack the Wordpress archive into it.
+
+> mkdir wordpress-deb
+> mv latest.zip mydeb/.
+> cd wordpress-deb
+> unzip latest.zip
+
+equivs expects a control file that contains various settings for the soon to be package. A default control file called **ctrl-file** can be created by running @@equivs-control ctrl-file@@, but for our purposes simply create a file called **control-file** in the current directory with the following content.
+
+> Section: misc
+> Priority: optional
+> Standards-Version: 3.6.2
+>
+> Package: my-wordpress-package
+> Version: 3.3
+> Maintainer: Firstname Lastname <name@example.com>
+> Architecture: all
+> Description: Vanilla Wordpress installation (only source files)
+> Files:
+
+The control file ends abruptly, lets change that. The **Files:** setting will contain a list of every file that makes up the Wordpress installation, obviously typing in each file by hand is a no go, so some bash scripting is called for.
+
+> #!/bin/bash
+>
+> # find finds all files in the wordpress directory
+> # sed removes the first line of find output that contains the current directory
+> find wordpress -type f \
+> | sed '/^wordpress$/d' \
+> | while read file; do
+>   # Syntax is ' <source file> <target directory>' 
+>   echo " $file /var/www/" >> control_file
+> done
+
+The above code needs some explaining. Basically each file in the Wordpress installation is listed in the control file along with it's destination root directory when the package is installed. Directories are automatically created by the packaging system. Hence the file **wp-content/themes/index.php** must be specified as follows (note the space before the file name).
+
+>  wp-content/themes/index.php /var/www/
+
+This tells the packaging tools which directory to put the file into. If **wp-content** and **themes** do not exist they are created.
+
+warning The package is assuming that Wordpress is installed to /var/www, this may not be what you want.
+
+Finally the package is ready for building.
+
+> equivs-build control-file
+
+Voila a brand new Wordpress package is ready, to install.
+
+> dpkg -i my-wordpress-package-3.3_all.deb

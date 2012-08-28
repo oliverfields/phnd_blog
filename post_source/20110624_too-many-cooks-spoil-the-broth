@@ -1,0 +1,32 @@
+Title: Too many cooks spoil the broth
+Description: When implementing rules and procedures people know what to expect and how to communicate, however if these structures are not designed thoughtfully they can become a hindrance rather than a help.
+Tag: Communication channel
+Tag: Communication
+
+During growth a small web agency will usually need more people and will handle more projects. After a couple of less-than-satisfactory projects, bureaucracy usually then ensues so that people feel they can better manage their work flow. Essentially this boils down to making processes so that the right communication reaches the right people. Unfortunately being good at making kick-ass web projects doesn't guarantee that the agency is good at making internal communication flows freely.
+
+
+h2 Communication channels
+
+The project members need to communicate amongst themselves. This is easy if there are only 2 people involved, but gets exponentially harder for each extra person in the project. The concept used to describe this is communications channels. If there are two people in a project then they can only talk to one another, thus there is only one channel, if there are 5 people that can potentially talk to one another then there are  10 communications channels. The formula is as follows, where n is number of people in the project:
+
+__Total Number of Communication Channels = n (n-1)/2__
+
+Naturally the more people the more challenging communications gets. Help.
+
+
+h2 Correct number of channels = the minimum required
+
+A guiding principle should be to always keep the number of communication channels to the minimum required to get a job done. For instance for small tasks that only need one person to solve, then directly connect the person that needs the thing done with the person that will be doing it. Each additional person muddies the water.
+
+
+h2 More communication in writing
+
+Written words are wide open to interpretation, but at least putting things in writing means there is a concrete reference point that can be discussed and referred to. Writing clearly is both a skill and requires discipline. Email is a starting point, but pretty soon most agencies will feel the need for structuring and organizing all written communication so it can be shared, commented upon and referred to.
+
+The challenge is to make people put their thoughts into writing. Usually the developers will be keen to have everything in writing, whilst the sales guys who where used to just asking for things to be done will find it harder to sit down and put their requests in writing. Creating a cultural shift to more formalized communication takes time and must be enforced.
+
+
+h2 Communication is 2 ways
+
+Giving a message to someone is only half the job, you must also ensure they understood you, generally this means they have to retell you the message in their words.

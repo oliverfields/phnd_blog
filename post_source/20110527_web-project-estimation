@@ -1,0 +1,38 @@
+Title: Web project estimation
+Description: The first price quoted to the client may become the only price they hear. Here are some tools and techniques to help when estimating web projects.
+Tag: Process
+Tag: Estimation
+
+Deadlines looming, IE bugs running wild and then someone taps you on the shoulder. "Could you please estimate this project for me? It is only a simple web site. Oh and also it has to do X, Y and Z.r".
+
+There are two options here A) Just give them a number or B) Go through the steps to make a proper estimate. This post isn't about option A because not spending sufficient time estimating a project often means assumptions go unchallenged and details are missed. Even before the project has started the risk have started to spiral. The cost of bad estimation is usually ill defined projects with vague deliverables.
+
+
+h2 Estimation process
+
+Sometimes estimation can seem like a unnecessary chore, it is only a guess after all. However for many smaller projects when the client is told a price they expect to pay that price. Taking the time to systematically apply a repeatable process when estimating will help insure against giving the client unrealistic expectations. The steps to follow could be:
+
+# Description
+# Project break down
+# Task estimation
+
+h3 Description
+
+The more information available the more 'exact' the estimation can be, therefore it is a good idea to require all estimations be done in writing to ensure things don't slip through the cracks and as a reference of what exactly was agreed upon at a later date. Anyone asking ‘Could you quickly give me a quote’ should be told to send at least an email describing what they want estimated.
+
+h3 Project break down
+
+From the written overview of the project the logical parts that need to be done will be easier to identify. E.g. Design, development, testing etc. A mind mapping tool can be valuable for this work, for instance "Freeplane":"http://sourceforge.net/projects/freeplane/". !/attachments/web_project_breakdown.png Web project breakdown!
+
+It may be useful, for projects have many common parts, to create an estimation template that includes the common tasks that have to be done. This will save time and help the organization learn.
+
+h3 Task estimation
+
+The identified parts of the project can now be broken down further into the actual tasks that will need to be done to complete them. At this stage it will be good to get input from the people who will actually be doing the work, or who know what it will involve, to set some time estimations on the tasks. A simple way to track this information could be to use a spread sheet, perhaps based on this "estimation template":"/attachments/project_estimation_template.xls".
+
+
+h2 Final touches
+
+The overview of tasks required for the project are a good basis for estimation, however to further increase the accuracy the estimate could be compared to past projects that where similar (assuming the organization has captured past performance data). Additionally a check list of common tasks could be consulted to make sure no obvious tasks have been left out. Such a check list should be maintained and updated when needed, perhaps during project post reviews.
+
+It can seem easy to reel off a quick ballpark, especially considering the time spent doing estimation is lost if the project is never started, but in the long run spending time proactively up front will pay off as the customers expectations for the project where set more accurately based on a well thought through estimation process.

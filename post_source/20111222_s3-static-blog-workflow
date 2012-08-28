@@ -1,0 +1,91 @@
+Title: Publishing a static blog 2/2
+Description: Workflow for hosting a statically generated blog from an Amazon S3 bucket.
+Tag: Static blog generator
+Tag: S3
+Tag: shblog
+Tag: Automation
+Tag: Git
+
+notice Using Amazon S3 to host a statically generated blog is an overcommable exercise that provides a good platform for serving the world your writings. This is part 2 of 2 and explains how to streamline and automate the publishing workflow. Part 1 explains the "basic setup":"/2011/12/22/s3-static-blog-setup.html".
+
+Assuming everything went well in part 1 we'll now look into a simple workflow for publishing the blog when a new article has been written. The workflow will include keeping the blog in version control, building the blog and uploading it. All scripted. Of course.
+
+# Commit changes to git
+# Generate blog 
+# Upload to S3 bucket
+
+notice This post uses "shblog":"https://github.com/oliverfields/shblog" as the static blog generator, but most other solutions will work comparably.
+
+
+h2 Keeping it under version control
+
+Assuming that the blog directory is **myblog** (created using @@$ shblog init myblog@@, see part 1) the following commands will initiate a git repository and commit the initial files.
+
+> $ cd myblog
+> $ git init
+> $ echo 'site/*' > .gitignore
+> $ git add *
+> $ git add .gitignore
+> $ git commit -am 'Initial commit'
+
+Here we have initalized the repository, told git to ignore any files under the **site** directory (these are generated from the source files and thus reproducable). Added all files (wildcards don't include dot(.) files, so seperate add for ignore file). Finally everything is committed and all is now under version control, wich is a goood thing. 
+
+
+h2 Generate blog
+
+Copy the default post under the **post_source** directory and change to something else. Shblog requires that blog posts are named as follows and contain a minimum of settings.
+
+* Prefixed with blog post date **YYYYMMDD_**
+* Remaining file name can be lowercase a-z, 0-9 or hyphen (-)
+* Have a Title and Description header
+
+This example blog post will do, save it as **myblog/post_source/20111225_hello**.
+
+> Title: Hello World
+> Description: Yeah right
+>
+> Some blog post content, notice the blank line that seperates the headers
+> from this content
+
+Once a suitable post has been created build the blog. Shblog supports two types of building **update** or **rebuild**. The former will only modify the files that have changed, the latter will build everything from scratch (must be used when blog html files are changed). Lets just update.
+
+> $ shblog update .
+
+The **myblog/site** directory now contains a brand new blog. Running @@git status@@ will tell you what files need commiting, add and commit them.
+
+
+h2 Upload to S3
+
+In part 1 s3cmd was setup, if this is the case the following commands will copy the blog files to the myblog bucket and set them public.
+
+> $ s3cmd put --recursive myblog/site/* s3://myblog/
+> $ s3cmd setacl --acl-public --recursive s3://myblog/
+
+
+h2 Making the script
+
+Based on the examples above this process is easily scriptable, an example could be as follows.
+
+> #!/bin/bash
+> blog_dir="/home/user/myblog"
+> blog_bucket="myblog"
+> 
+> shblog update "$blog_dir"
+> s3cmd put --recursive "$blog_dir/site/"* "s3://$blog_bucket/"
+> s3cmd setacl --acl-public --recursive "s3://$blog_bucket/"
+
+Simply make executable and run after creating a new post, e.g..
+
+> $ chmod u+x publish_blog_script
+> $ ./publish_blog_script
+
+
+h2 Update blog on commit
+
+As a bonus as soon as a post is commited the blog can automatically be built and uploaded using git's hooks (scripts run as different events occour). We need to use git's post-commit hook (it is run on a successful commit to the repository). Copy the **publish_blog_script** listed above to the appropriate location.
+
+> $ cp publish_blog_script myblog/.git/hooks/post-commit
+
+Now create a new blog post and commit it, git will run the post-commit script and the live blog will be updated.
+
+Now you are ready to stop making tools and start writing posts.

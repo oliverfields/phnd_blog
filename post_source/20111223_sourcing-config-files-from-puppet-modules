@@ -1,0 +1,31 @@
+Title: Sourcing config files from puppet modules
+Description: How to correctly source a file in a Puppet module.
+Tag: Puppet
+Tag: Configuration management
+
+Sharing this as it took me embarrisingly long to figure out. Kept getting error @@Could not evaluate: Could not retrieve information from source@@ when trying to source a config file from a Puppet module.
+
+When creating a Puppet module a common requirement will be to include some ready made config file. To make a nginx module the file structure could be setup as follows, where the ready made config is **nginx.conf**.
+
+> modules
+>   nginx
+>     files
+>       nginx.conf
+>     manifests
+>       init.pp
+
+In the **init.pp** file, amongst other things, to set the config file the following could be used.
+
+> file { "/etc/nginx/nginx.conf":
+>   ensure => file,
+>   source => "puppet:///modules/nginx/nginx.conf",
+> }
+
+The key was understanding the **source** value. It can be broken down as follows.
+
+* **puppet://** - Makes puppet look for it amongst its own locations, works differently if running a puppet master or from command line
+* **/modules** - The command line interprets the **modules** part as the modules directory, which can be supplied from command line using **--modulepath=/path/to/modules** if modules are not in default location (/etc/puppet/modules on Debian). Older versions of Puppet allowed the modules section to be skipped, but this is deprecated now
+* **/nginx** - The module name
+* **/nginx.conf** - The name of the config file found in **modules/nginx/files**
+The key here is that Puppet automatically looks for files in the **modules/nginx/files** directory, i.e. **puppet:///modules/nginx/files/nginx.conf** is wrong. 
+Hope that saves someone some time.

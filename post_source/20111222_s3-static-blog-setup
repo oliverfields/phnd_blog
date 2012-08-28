@@ -1,0 +1,43 @@
+Title: Publishing a static blog 1/2
+Description: Hosting a statically generated blog from an Amazon S3 bucket.
+Tag: Static blog generator
+Tag: S3
+Tag: shblog
+
+notice Using Amazon S3 to host a statically generated blog is an overcommable exercise that provides a good platform for serving the world your writings. This is part 1 of 2 and explains how to get up and running. Part 2 explains a possible "automated workflow":"/2011/12/22/s3-static-blog-workflow.html".
+
+h2 Generate a blog
+
+Static blog generators transform a bunch of plain text files into whatever is needed to make the posts available online. Typically the source files use a simple markup that is transformed into HTML. The beuty of this approach is, amongst others, that server requirements are --non existent-- basic -- be able to serve files.
+
+There are many static blog generators about, this example will use one called "shblog":"https://github.com/oliverfields/shblog", but there are many available. Setup **shblog** as per instructions in the README file and create a blog.
+
+> $ shblog init myblog
+> $ shblog update myblog
+
+The directory **myblog/site** now contains the entire blog, this is the directory we need to make available to the world.
+
+
+h2 Setup S3
+
+Amazon's Simple Storage Service, or S3, is a cloud based file storage that is stable, can handle large loads and is relatively cheap. S3 also can serve static content over HTTP, just like any web server. To set one up head over to "Amazon web services":"http://aws.amazon.com/s3/"(AWS) and create an account. Because S3 is a pay for what you use service it isn't possible to know exactly what the hosting will cost, but they do provide good pricing information to give a good idea.
+
+First install "s3cmd":"http://s3tools.org/s3cmd", a command line s3 client that allows administration, uploading and downloading from the S3 service. Get the AWS keys from the confirmation email or from the AWS Management console page and have them ready. This step will install s3cmd and configure it to use the new S3 account. 
+
+> $ aptitude install s3cmd
+> $ s3cmd --configure
+
+Now create a bucket called **myblog** where the web files will be served from and upload the blog files to the bucket.
+
+> $ s3cmd md s3://myblog
+> $ s3cmd put --recursive myblog/site/* s3://myblog/
+
+Make the bucket **myblog** public.
+
+> $ s3cmd setacl --acl-public --recursive s3://myblog/
+
+From the AWS Management Console you can get the Endpoint URL to the bucket, opening the URL should now show your blog.
+
+To finish off the blog will need a proper URL, to set this up you need a domain and access to setting DNS records. How to get a domain and change DNS settings is outside the scope of this post, but essentially all that needs to be done is add a CNAME record (**not** an A record) that points to the S3 endpoint domain (Endpoint URL without the http stuff).
+
+Publishing posts is now all done from commandline and of course easily automated, well apart from the actual writing.

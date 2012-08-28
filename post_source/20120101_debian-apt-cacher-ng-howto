@@ -1,0 +1,64 @@
+Title: Debian apt-cacher-ng how to
+Description: How to for setting up local apt repository to save bandwidth using apt-cacher-ng on Debian Squeeze.
+Tag: apt-cacher-ng
+Tag: Debian
+Tag: How to
+
+Apt-cacher-ng is a caching proxy for apt packages. Clients that use the proxy download apt packages directly from the proxy server, which typically will be on the local network.
+
+When a client requests a package that apt-cacher-ng does not have it will be fetched from regular repositories and then saved on the proxy, essentially packages are only downloaded once to the local network, this is good for bandwidth, speed and to minimize load on the public Apt repositories.
+
+notice When hosting servers in the cloud, often network traffic between servers in the same cloud is free, so only fetching each package externally once and distributing it internally will save you cash.
+
+To setup and test we only need one machine to both be configured as the apt cache server and also a client of apt-cacher-ng. The usual @@aptitude install apt-cacher-ng@@ gets us started.
+
+Once the installed only a few settings need to be configured, the settings for apt-cacher-ng and Apt itself.
+
+
+h2 apt-cacher-ng proxy server
+
+Apt cacher runs on port 3142 by default, open firewall/iptables as required. The settings file is @@/etc/apt-cacher-ng/acng.conf@@ and default settings will work fine. The tricky part is adding new repositories.
+
+notice It is possible to import the packages on the server into the cache using a web based administration interface, a quick Google search will help you out.
+
+
+h2 Client setup
+
+Once the server is setup the clients that are to use the proxy must be configured. This example assumes that client machines want to get all their packages from the server, a nice way which makes it obvious what is going on is to configure the @@/etc/apt/sources.list@@ on each client as follows, where **apt-proxy** is the domain name or IP address of the proxy server.
+
+> deb http://apt-proxy:3142/ftp.ie.debian.org/debian/ squeeze main
+> deb-src http://apt-proxy:3142/ftp.ie.debian.org/debian/ squeeze main
+>
+> deb http://apt-proxy:3142/security.debian.org/ squeeze/updates main
+> deb-src http://apt-proxy:3142/security.debian.org/ squeeze/updates main
+
+Note that the **sources.list** should be setup on the machine that also runs apt-cacher-ng, that way packages downloaded to it will also be cached.
+
+
+h2 Setting up repositories to cache
+
+In the example above each repository is cached by apt-cacher-ng (the **apt-proxy:3142** part) and the actual repository is specified afterwards. Hence the first line is saying use the cache all package requests to @@ftp.ie.debian.org/debian/ squeeze main@@.
+
+
+h2 Repository remapping
+
+Unfortunately life isn't as simple as just adding any repository to **sources.list** and prefixing it with the proxy domain part in order to cache it.  Each repository to cache must also be specified on the proxy server itself, this is known as **repository remapping**. On a Debian system there are already many remappings (seems all official Debian repos)  specified in @@/etc/apt-cacher-ng/acng.conf@@, but we want to add a dotdeb.org repository. To do this on the apt-cacher-ng server add the following line to @@/etc/apt-cacher-ng/acng.conf@@.
+
+> Remap-dotdeb-php: http://packages.dotdeb.org
+
+Restart server (@@invoke-rc.d apt-cacher-ng restart@@) and then add the following to each client @@/etc/apt/sources.list@@ file.
+
+> deb http://apt-proxy:3142/packages.dotdeb.org squeeze all
+
+To add the GnuPG key for the dotdeb repository, the following must be run on each client.
+
+> $ wget http://www.dotdeb.org/dotdeb.gpg
+> $ cat dotdeb.gpg | sudo apt-key add -
+
+Update apt and the dotdeb packages should be available.
+
+> $ aptitude update
+> $ aptitude show php5-fpm | grep '^Version:'
+> Version: 5.3.8-1~dotdeb.2
+
+Going forward the network will only download a package externally once, which is nice for the Debian repositories bandwidth and yours.

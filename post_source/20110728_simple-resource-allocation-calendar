@@ -1,0 +1,52 @@
+Title: Simple resource allocation calendar
+Description: Simplistic solution to managing resources using a spreadsheet and weekly meetings.
+Tag: Resource management
+Tag: Planning
+
+The agency I work for recently expanded and as a result assignments became larger. Our first projects essentially where assignments done by one person, but larger projects required more people per project and soon questions about who was working on what, when things would be done and when we would have capacity to start new projects became hard to answer. Our somewhat simplistic solution to managing resources was to use a spreadsheet and weekly team planning meetings.
+
+
+h2 Resource allocation
+
+There was already a task tracking system in place (heavily modified version of "TaskFreak":"http://taskfreak.com/original", but it did not provide a way to see when people where assigned to do work across projects. It was easy to see per project who was assigned to the different tasks, but not which projects and tasks a person was assigned to. The data was in the system, but not in a way that we could easily see or manipulate it.
+
+Increased project complexity required us to be able to book in people on our projects, track capacity and goals. A simple Google docs spreadsheet was setup to manage this and for easy sharing, see the following figure. 
+
+!/attachments/resource_calendar.png Simple resource calendar spreadsheet!
+
+The spreadsheet lists each week vertically because weekly is sufficiently granular for us (see Weekly perspective below). Horizontally each resource is listed with the following columns for each resource.
+
+* Project/task
+* Planned days - Estimated days to be worked this week
+* Booked by - Name of Project Manager that has booked the resource
+* Plan to finish - Will the item be finished this week (yes or no)
+* Actually finished - Was the item finished this week (yes or no)
+
+
+h2 Booking resources
+
+Resources are booked by project managers as they are needed. As a rule of thumb a person will on average work 6 hours a day (the rest goes to meetings, support, lunch etc). On the assumption there is only 6 productive project hours a day resources are booked for only half and full days at a time. The booking is intentionally coarse, meaning only the tasks that take longer than half a day are booked. This ensures that the big tasks get done and that there is room for all the small things that need to be done during the day.
+
+To book a resource the project manager would find the resources columns, scroll down to appropriate week and enter __Project/task__, __Planned days__ (to be done that week), __Booked by__ (the project managers name), Enter Y if the task is to be finished that week or N if not.
+
+If a task would take 3 weeks the project manager would enter the same task over three weeks where the two first would have __Plan to finish__ set to N and the last would have Y.
+
+
+h2 Weekly perspective
+
+Each week starts with a Monday morning meeting where the past week is evaluated and the current weeks tasks planned. The past week evaluation is brief, essentially going through the tasks and asking if completed or not. If the task was completed __Actually finished__ is set to Y, else N. This column is mainly to track our past performance and, track performance and highlight tasks that are slipping so they can be included in future plans. A weekly perspective is granular enough to ensure smaller tasks are not forgotten, but sufficiently coarse that all tasks do not need to be planned (as would be the case if we booked by hours).
+
+
+h2 Team capacity
+
+Because tasks are allocated by days it there is normally only about 3 or 4 main tasks to be done each week, this helps focus on the important tasks being done. Essentially a resource is fully booked if they have 5 days allocated work. When this happens tasks are split across multiple weeks. As the calendar is filled up it soon becomes easy to get an idea of when there is spare capacity, allowing the sales team to quickly see when they can expect new projects to be done.
+
+
+h2 Caveats
+
+Naturally such a system is only as good as the input it gets and is reliant on people using and keeping it updated. It is not a detailed planning tool but provides more a guideline to what has to be done that week. This works for us because we juggle many smaller projects that are for a number of reasons often delayed (e.g. something takes longer than expected to develop or a client does not get back to us as agreed), so we need a system that can offer some structure but not be too cumbersome to maintain.
+
+
+h2 Simple but effective resource management
+
+The spreadsheet is a simple tool that has been powerful for answering who is doing what, when will it be done and when can we start new stuff. A good example of 80% is good enough?

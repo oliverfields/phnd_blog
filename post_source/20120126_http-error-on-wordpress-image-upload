@@ -1,0 +1,37 @@
+Title: Fixing HTTP error on Wordpress 3.3.1 image upload
+Description: Fix for Wordpress HTTP error when uploading images on a Nginx/php-fpm server.
+Tag: Wordpress
+Tag: Nginx
+Tag: Php-fpm
+Tag: GD
+Tag: Tuning
+Tag: Debian
+
+After moving a Wordpress blog to new Rackspace cloud server running Debian, Nginx and Php-fpm. Image uploads half stopped working. The image would get uploaded (using either browser or flash uploaders), but Wordpress would complain by showing a **HTTP Error** error and would not resize (crunch) the image.
+
+notice The post explains the circumstance and how the solution was found, if you just want the fix simply increase PHP's **memory_limit** and restart web server/php-fpm.
+
+
+h2 Troubleshooting
+
+The Nginx and php-fpm logs did not contain any pertinent information despite the excellent Firefox extension Live HTTP Headers showing that the HTTP request returned a 500 error (Gulp!). Another symptom was that the **Full size** option under the uploaded image was set to **(0 x 0)**. Next move was to enable Wordpress PHP error reporting, as this was turned off in the production environment. Simply adding the following lines into **wp-config.php** does the trick.
+
+> error_reporting(E_ALL);
+> ini_set('display_errors', '1');
+
+Retrying the upload now showed a more useful error.
+
+> Fatal error: Allowed memory size of xxx bytes exhausted (tried to allocate xxx bytes) in /var/www/wordpress/wp-includes/media.php on line 258
+
+
+h2 Fixing
+
+Basically to resize the image php needs enough memory, this is normally set in php.ini (but can also be done via htaccess or directly in php scripts using ini_set()). However for setting the memory limit when using php-fpm with a pool and Nginx, on a typical Debian install, this is done in the pools config e.g. **/etc/php5/fpm/pool.d/&lt;my pool/site&gt;.conf**. To allow larger images to be crunched open this file and make sure to add/edit so it contains @@php_admin_value[memory_limit] = 128M@@, on my system this handles typical 4 meg photos from a low end SLR camera.
+
+A good resource for estimating required memory when using the GD image library was shared by CodeWallah over on "forums.devshed.com":"http://forums.devshed.com/showpost.php?p=2245794&postcount=4".
+
+Another setting that is good for large uploads is the **fastcgi_max_temp_file_size**, it controls buffering between nginx and php-fpm, this was mentioned on "radicand.org":"http://www.radicand.org/nginx/". Add the following to **/etc/nginx/fastcgi_params** to disable the buffer.
+
+> fastcgi_max_temp_file_size 0;
+
+It is crucial to resize images properly, otherwise users will have to wait for ever and bandwidth costs go out the window, glad this one got solved:)

@@ -1,0 +1,62 @@
+Title: Setup Wordpress email from Debian cloud server
+Description: How to explaining using sSMTP as the MTA on a cloud server. Web developers are used to web servers from regular ISPs having mail capabilities out of the box. On a Rackspace or Amazon S3 server this must be setup.
+Tag: E-mail
+Tag: sSMTP
+Tag: Rackspace
+Tag: EC2
+Tag: How to
+Tag: SMTP
+
+Virtual cloud servers are great. Set one up with a couple of clicks, install Wordpress and finish off with a DNS update and your blog is online. Except Wordpress won't be able to send email, as the new server isn't configured for that. Using a traditional web host this will all work out of the box, but on a cloud server you need to make it happen.
+
+Several options are available. Setup your own mail server, use an existing service such as "AuthSMTP":"http://www.authsmtp.com/" or use an existing account. This how to will explain how to setup mail from the cloud server to be sent through an existing mail account using sSMTP. Using an external mail server that is on an IP not associated with the cloud servers is also good for avoiding blacklisting.
+
+
+h2 Install sSMTP
+
+sSMTP is an extremely simple MTA((Mail Transfer Agent)), all it does is connect to an existing SMTP server and send mail. This how to assumes that we are only concerned about getting emails sent from the cloud server, and for this sSMTP will do nicely, so install as usual.
+
+> aptitude install ssmtp
+
+If an existing MTA is already installed aptitude will suggest removing it, as indeed you must if you want to continue this how to.
+
+h2 Configure sSMTP
+
+Before configuring sSMTP you will need access to an existing SMTP mail server (address, port, user name and password), you could use GMail or the same SMTP server that hosts the mail for the same domain as the blog. Configuring sSMTP is done via **/etc/ssmtp/ssmtp.conf**, open it up and add the following.
+
+> root=admin@example.com
+> hostname=blog.example.com
+> mailhub=smtp.anotherexample.com
+> AuthUser=me@example.com
+> AuthPass=mypass
+> #UseSTARTTLS=YES
+> FromLineOverride=YES
+
+% Setting % Description %
+| root | Mail address to send system emails |
+| hostname | FQDN((Fully Qualified Domain Name)) of server |
+| mailhub | The SMTP server that sSMTP will connect to to send mail |
+| AuthUser | User name for login to SMTP server |
+| AuthPass | Password for login to SMTP server |
+| UseSTARTTLS | Uncomment if the SMTP server requires/allows TLS so that the communication between sSMTP and the SMTP server is encrypted |
+| FromLineOverride | Allows other users or applications to set their own From header. Enabling this allows Wordpress to specify that it is the sender |
+
+And now all you have to do is.. nothing. sSMTP is setup and will send emails using the specified SMTP server.
+
+To test from command line try the following.
+
+> echo "world" | mail -s 'Hello' me@example.com
+
+Easy way to test if Wordpress sends mails is to go to **/wp-login.php?action=lostpassword** and use the **Get new password** form.
+
+h2 Revaliases
+
+The **FromLineOverride** setting allows Wordpress to specify it's own From header. The default for Wordpress it **Wordpress &lt;wordpress@blog.example.com&gt;**. This looks nice but if users for any reason replied, and you hadn't setup a wordpress@ address, the email would bounce.
+
+sSMTP revaliases file allows setting rewrite rules per the sending user for the From field. To override the Wordpress From field, comment out (add **#**) the **FromLineOverride** line in **/etc/ssmtp/ssmtp.conf** and add the following to **/etc/ssmtp/revaliases**.
+
+> www-data:me@example.com:smtp.example.com
+
+This means when the **www-data** user sends email (this is the user that runs the web server on a Debian system) the From header will be set to **"www-data" <me@example.com>** and the email sent via smtp.example.com. Now when users hit reply to email from Wordpress it will go to **me@example.com**. Unfortunately I have not figured out how to change the **www-data** that appears in the From header, please comment if you know how.
+
+Wrapping up sSMTP is an easy way to get your cloud server sending emails using your existing SMTP account.

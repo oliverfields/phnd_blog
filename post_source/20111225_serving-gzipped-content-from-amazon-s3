@@ -1,0 +1,82 @@
+Title: Serving gzipped content from Amazon S3
+Description: Script to recursively upload a directory to S3, gzipping content and setting S3 meta data for selected file types.
+Tag: S3
+Tag: PageSpeed
+Tag: Optimization
+Tag: Automation
+Tag: s3cmd
+Tag: Bash
+Tag: Script
+
+In order to optimize a site for speed a service such as Google's "PageSpeed":"https://developers.google.com/pagespeed/" is invaluable. If running a site from Amazon's S3 service (i.e. static files) a lot will be taken care of, but some of the suggestions from PageSpeed are not easy to get done manually. One example is that PageSpeed suggests serving HTML, CSS and javascript files already gzip compressed.
+
+Serving a file correctly from S3 requires that the file contents be gzipped and that the HTTP headers return @@Content-Encoding: gzip@@ so that the browser knows what to do with it.
+
+To achieve this manually simply gzip a file, say **index.html**, upload it to your S3 bucket. In the AWS Management Console, select the file then click **Properties > Meta data > Add more meta data**. Enter **Content-Encoding** as **Key** and **gzip** as **Value**. As long as your site only has one file this is a viable solution.
+
+This process can be automated using a bash script and the **s3cmd** command, see below for an example of such a script.
+
+notice Script assumes s3cmd installed and configured.
+
+warning This script will replace all .html, .css and .js files in the html_dir with gzipped versions! Use at own risk.
+
+> #!/bin/bash
+> 
+> # Bucket name
+> bucket="s3://mysitebucket/"
+> # Directory containing site files (html, css etc)
+> html_dir="/mysite"
+>
+> cd "$html_dir"
+>
+> # For each file decide if to compress and set correct headers
+> or just to upload it
+> # find finds all files in this directory and those below
+> # sed trims starting ./, removes the . and the starting /
+> find . \
+> | sed 's/^\.\/// ; /^\.$/d ; s/^\///' \
+> | while read file; do
+>  # If directory just ignore, s3 doesn't use directories. Uploading a file
+>  # my_dir/my_file is just a file, the GUI just shows it as a folder
+>  if ! [ -d "$file" ]; then
+>    file_name="${file##*/}"
+>    file_ext="${file##*.}"
+>
+>    # If compressible file, gzip and put with appropriate header
+>    case "$file_ext" in
+>      html|htm)
+>        mime_type=' --mime-type "text/html"'
+>        headers=' --add-header "Content-Encoding: gzip"'
+>        gzip "$file" && mv "$file.gz" "$file"
+>      ;;
+>      js)
+>        mime_type=' --mime-type "application/javascript"'
+>        headers=' --add-header "Content-Encoding: gzip"'
+>        gzip "$file" && mv "$file.gz" "$file"
+>      ;;
+>      css)
+>        mime_type=' --mime-type "text/css"'
+>        headers=' --add-header "Content-Encoding: gzip"'
+>        gzip "$file" && mv "$file.gz" "$file"
+>      ;;
+>      *)
+>        mime_type=""
+>        headers=""
+>      ;;
+>    esac
+>
+>    # Upload file with appropriate settings
+>    eval "s3cmd put \"$file\" \"$bucket$file\"${mime_type}${headers}"
+>  fi
+> done
+>
+> # Make everything public
+> s3cmd setacl --acl-public --recursive "$bucket"
+
+Running the script will upload all files in the html_dir and when appropriate gzip them and set appropriate S3 meta data so that they are served correctly (i.e. send gzipped to browser with correct HTTP header). Doing this should improve the PageSpeed score making the site more responsive for users and hopefully increase search engine ranking as well.
+
+As a bonus the following headers could be set to utilize browser cache, effectively they specify that the file in question is valid for one week (60x60x24x7).
+
+> headers=' --add-header "Content-Encoding: gzip" --add-header "Cache-Control: max-age=604800, must-revalidate"'
+
+S3 is useful for hosting static sites, and with some tweaks achieving high page speeds is definitely in reach.

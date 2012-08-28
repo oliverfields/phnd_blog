@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /tag
+Disallow: /javascript
+Disallow: /css
+
+Sitemap: http://blog.spotlessky.com/sitemap.xml

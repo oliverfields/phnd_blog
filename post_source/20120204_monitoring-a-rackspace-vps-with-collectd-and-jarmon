@@ -1,0 +1,205 @@
+Title: Monitoring a Debian Rackspace VPS with Collectd and Jarmon
+Description: Monitoring production servers is vital for tuning, this is also true for cloud based server. Good tools for this are collectd for data collection and Jarmon for data visualization.
+Tag: VPS
+Tag: Monitoring
+Tag: How to
+Tag: Collectd
+Tag: Jarmon
+Tag: Rackspace
+Tag: Debian
+Tag: Squeeze
+
+Monitoring servers is a good way to identify bottlenecks, see if tweaks to configs increase performance or to aid in capacity planning.
+
+This how to will explain setup of "collectd":"http://collectd.org/", "Jarmon":"https://launchpad.net/jarmon" and a password protected Nginx virtual host to view some pertinent stats for a Rackspace VPS. Lets start with a few words about the technology.
+
+
+h2 Collectd
+
+Collectd gathers statistics about various aspects of the server and provides a high resolution of statistics, e.g. every 10 seconds, compared to similar tools such as Munin or Cacti that are typically run much less frequently.
+
+The statistics from Collectd are commonly stored in RRD((Round Robin Database)) databases. RRD databases are optimized for storing time series data and maintaining a stable storage footprint. Collectd can optionally send it's data to a central server for storage, which is outside the scope of this how to, here we are only concerned about monitoring a single server and visualizing the data.
+
+Because different servers have different things that can be measured Collectd has a wide number of plugins available, it is your task to choose which plugins to use, this how to will suggest some that can be used on a typical Rackspace VPS.
+Collectd is first and foremost a tool for collecting data, not visualizing it, that is where Jarmon comes in,
+
+
+h2 Jarmon
+
+A web based javascript/HTML5 library displaying configurable graphs from data in RRD files. Perfect for viewing Collectd's output. As a bonus the browser does all the computation and displaying, all your server has to do is send over the RRD data.
+
+
+h2 Setup Collectd
+
+Debian Squeeze has at time of writing two collectd packages **collectd** and **collectd-core**. The former contains everything and the kitchen sink, lets keep our server lean and mean and get the bare essentials **collectd-core** package.
+
+> aptitude install collectd-core
+
+Edit **/etc/collectd/collectd.conf** so it resembles the following. This example will enable a good selection of stuff to monitor on Rackspace VPS web server running Wordpress, but as always YMMV.
+
+> # Hostname, will need for setting up Jarmon later 
+> Hostname "myhost"
+> BaseDir   "/var/lib/collectd"
+> PIDFile   "/var/run/collectd.pid"
+> PluginDir "/usr/lib/collectd"
+> TypesDB   "/usr/share/collectd/types.db"
+> # How often to collect stats in seconds, part of what makes
+> # collectd great:)
+> Interval  10
+> Timeout 2
+> ReadThreads 5
+> 
+> # Load first so other plugins can log activity
+> LoadPlugin "logfile"
+> &lt;Plugin "logfile"&gt;
+>   LogLevel "warn"
+>   File "/var/log/collectd.log"
+>   Timestamp true
+> &lt;/Plugin&gt;
+> 
+> # Collectd can log to various back ends, we want RRD for Jarmon
+> LoadPlugin "rrdtool"
+> &lt;Plugin "rrdtool"&gt;
+>   DataDir "/var/lib/collectd/rrd"
+>   CacheFlush 120
+>   WritesPerSecond 50
+> &lt;/Plugin&gt;
+> 
+> # For a web server on a VPS these plugins will give good data
+> # however read up on this at the following URL, you may want other
+> # and even need to write your own. On a web server monitoring e.g. Nginx
+> # or Apache and perhaps mysql would be smart, there are plugins available.
+> # http://collectd.org/wiki/index.php/Table_of_Plugins
+> LoadPlugin "conntrack"
+> LoadPlugin "contextswitch"
+> LoadPlugin "cpufreq"
+> LoadPlugin "cpu"
+> LoadPlugin "df"
+> LoadPlugin "disk"
+> LoadPlugin "entropy"
+> LoadPlugin "interface"
+> LoadPlugin "irq"
+> LoadPlugin "load"
+> LoadPlugin "memory"
+> LoadPlugin "processes"
+> LoadPlugin "swap"
+> LoadPlugin "tcpconns"
+> LoadPlugin "uptime"
+> LoadPlugin "users"
+> LoadPlugin "vmem"
+
+Save config and restart collectd to start amassing data.
+
+> invoke-rc.d collectd restart
+
+
+h2 Jarmon setup
+
+Download and unpack latest release from the "Jarmon":"https://launchpad.net/jarmon" site, this how to uses v11.8.
+
+> wget http://launchpad.net/jarmon/trunk/11.8/+download/jarmon-11.8.zip
+> unzip jarmon-11.8.zip
+
+Create a new web directory for serving Jarmon and copy across what we need from the Jarmon download. The download contains a lot of good stuff, including unit tests and excellent examples that are worth spending some time with.
+
+> mkdir /var/www/mywebdir
+> cp -R jarmon-11.8/docs/examples/assets /var/www/mywebdir/.
+> cp jarmon-11.8/jarmon/jarmon.js /var/www/mywebdir/assets/js/.
+> cp -R jarmon-11.8/docs/examples/index.html /var/www/mywebdir/.
+> cp -R jarmon-11.8/docs/examples/jarmon_example_recipes.js /var/www/mywebdir/.
+
+Update link to **jarmon.js** line in **mywebdir/index.html** from.
+
+> &lt;script type="text/javascript" src="../../jarmon/jarmon.js"&gt;&lt;/script&gt;
+
+To this.
+
+> &lt;script type="text/javascript" src="assets/js/jarmon/jarmon.js"&gt;&lt;/script&gt;
+
+At this point Jarmon is in good stead, but needs telling what to display. Jarmon refers to it's graph configuration as **recipes** and they take some time to setup and tune. Below is a simple example which we will examine in detail, update **jarmon_example_recipes.js** to match this.
+
+> // Setup, just do it
+> if(typeof(jarmon) === 'undefined') {
+>   var jarmon = {};
+> }
+>
+> // This sets up the tabs and the graphs for each tab, here we are
+> // having a General tab which will contain graphs for users and diskfree
+> jarmon.TAB_RECIPES_STANDARD = [
+>   ['General',
+>     ['users','diskfree']
+>   ],
+> ];
+>
+> // The following recipes define the graphs for users and contextswitch
+> jarmon.CHART_RECIPES_COLLECTD = {
+>   'users': {
+>      title: 'Users',
+>      data: [
+>        ['data/users/users.rrd', 0, 'users', ''],
+>      ],
+>      options: jQuery.extend(true, {}, jarmon.Chart.BASE_OPTIONS,
+>                                      jarmon.Chart.STACKED_OPTIONS)
+>    },
+>
+>   'diskfree': {
+>      title: 'Disk free space',
+>      data: [
+>        ['data/df/df-dev.rrd', 0, 'df-dev', ''],
+>        ['data/df/df-root.rrd', 0, 'df-root', ''],
+>        ['data/df/df-dev-shm.rrd', 0, 'df-dev-shm', ''],
+>        ['data/df/df-lib-init-rw.rrd', 0, 'df-lib-init-rw', ''],
+>      ],
+>      options: jQuery.extend(true, {}, jarmon.Chart.BASE_OPTIONS,
+>                                       jarmon.Chart.STACKED_OPTIONS)
+>   },
+>
+> }; // End CHART_RECIPES_COLLECTD
+
+Each graph has a data setting, this is where the contents of the graph is determined. The users graph will get data from the collectd users plugin, it is simple and only has one rrd file. Note the data directory (data/users and data/diskfree), these must be available to the script via the web server, we will configure this directory as an alias later.
+
+The disk free plugin has several rrd file, one for each partition, this example is from Rackspace and you can see the partitions it has, yours may differ. To see what partitions are available do a @@ls /var/lib/collectd/rrd/myhost/df@@, where **myhost** matches the **Hostname** setting in **collectd.conf**.
+
+notice Writing Jarmon recipes can take some time, to ease the burden a "sample configuration":"/attachments/recipes.js" has been made available. Please note that this will need to be modified to match your specific collectd plugins and should be tailored to what you need to know, it is a rough example, treat as such.
+
+
+h2 Web server setup
+
+Collectd is humming away and Jarmon is ready to rock, the final piece of the puzzle is setting up web server access. Assuming a running Nginx is already configured, this example will setup a virtual host listening to port 8888 and password protected. Create **/etc/nginx/site-available/jarmon** and with the following content.
+
+> server {
+>   listen 8888;
+>
+>   root /var/www/mywebdir
+>   
+>   # Password protect
+>   auth_basic "Restricted";
+>   auth_basic_user_file /var/www/htpasswd;
+> 
+>   location / {
+>     index index.html;
+>   }
+> 
+>   location /data {
+>     alias /var/lib/collectd/rrd/myhost;
+>     autoindex on;
+>   }
+> }
+
+Note that the **root** and **alias** settings probably need tweaking for your server.
+
+Create **/var/www/htpasswd** containing suitable user name and password, ask Google about **htpasswd generators** if you are stuck here. The following will create a htpasswd with user **admin** and password **greendog**.
+
+> echo 'admin:$apr1$X8Su70BE$.Fk1RgkDsRDGYZ1p0UCGt.' &gt; /var/www/htpasswd
+
+The virtual host should now serve the Jarmon **index.html** file and make the collectd rrd directory available. Just need to enable it and restart nginx.
+
+> ln -s /etc/nginx/sites-available/jarmon /etc/nginx/sites-enabled/jarmon
+> invoke-rc.d nginx restart
+
+Accessing the new vhost should now prompt for password and graciously let you view your server stats upon a valid user name and password.
+
+
+h2 Next steps
+
+As should be obvious the initial setup isn't too bad, the main struggle is working out what to monitor and how to display it in a way that makes problems leap out of the graphs. This how to has not even scratched the surface of those questions, please leave comments if you have any helpful hints about this or know of good resources for learning more about monitoring.

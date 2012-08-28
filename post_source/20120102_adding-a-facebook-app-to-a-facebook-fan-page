@@ -1,0 +1,7 @@
+Title: Adding a Facebook app to a Facebook Fan page
+Description: How to create link for adding a Facebook app to a Facebook Fan page.
+Tag: Facebook
+
+Previously to add an app to a Facebook Fan page you'd go to the apps home page and click a button. Facebook have now rearranged how this is done, and a bit like being dropped behind enemy lines it is no walk in the park. To add an app to your page you need to open the following URL, where **&lt;app id&gt;** is your apps ID and **&lt;app url&gt;** is your apps URL.
+
+> https://www.facebook.com/dialog/pagetab?app_id=&lt;app id&gt;&display=popup&next=&lt;app url&gt;
